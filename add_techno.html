@@ -14,13 +14,19 @@
     <div class="row">
         <div class="col"><a href="index.html">accueil</a></div>
         <div class="col"><a href="add_techno.html">technos</a></div>
-        <div class="col">contact</div>
+        <div class="col"><a href="contact.html">contact</a></div>
     </div>
-    <h1>Accueil</h1>
-    <h2>Technologies à veiller</h2>
-
-    <div id="technos"></div>
-    <script src="main.js"></script>
+    <h1>Ajouter une techno</h1>
+    <h2>Ajouter cette techno :</h2>
+    <div id="addform">
+        <form id="add-techno-form">
+            <input type="text" placeholder="nom de la techno" id="techno-name"><br>
+            <input type="text" placeholder="description" id="techno-description"><br>
+            <input type="text" placeholder="url du site officiel" id="techno-url"><br>
+            <button type="submit">ajouter</button>
+        </form>
+    </div>
+    <script src="add_techno.js"></script>
 </body>
 
 </html>
