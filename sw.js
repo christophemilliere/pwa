@@ -10,7 +10,9 @@ self.addEventListener('install', evt => {
             'add_techno.html',
             'add_techno.js',
             'contact.html',
-            'contact.js'
+            'contact.js',
+            'database.js',
+            'ids.js'
         ]);
     });
     evt.waitUntil(cachePromise);
@@ -89,4 +91,35 @@ self.addEventListener('push', evt => {
         image: 'images/icons/icon-72x72.png',
     }
     evt.waitUntil(self.registration.showNotification(title, options));
+});
+
+self.addEventListener('sync', event => {
+    if (event.tag === 'sync-technos') {
+        event.waitUntil(
+            getAllTechnos().then(technos => {
+
+                console.log('got technos from sync callback', technos);
+
+                const unsynced = technos.filter(techno => techno.unsynced);
+
+                console.log('pending sync', unsynced);
+
+                return Promise.all(unsynced.map(techno => {
+                    console.log('Attempting fetch', techno);
+                    fetch('http://localhost:3001/technos', {
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        },
+                        method: 'POST',
+                        body: JSON.stringify(techno)
+                    })
+                        .then(() => {
+                            console.log('Sent to server');
+                            return putTechno(Object.assign({}, techno, { unsynced: false }), techno.id);
+                        })
+                }))
+            })
+        )
+    }
 });

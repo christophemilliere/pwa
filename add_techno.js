@@ -25,7 +25,29 @@ addTechnoForm.addEventListener('submit', evt => {
             console.log('resp to post to /technos', resp);
         })
         .catch(() => {
-            
+            if ('serviceWorker' in navigator && 'SyncManager' in navigator) {
+                console.log('SyncManager supported by browser');
+                console.log('we are probably offline');
+                navigator.serviceWorker.ready.then(registration => {
+                    return putTechno(payload, payload.id).then(() => {
+                        // register a sync with the ServiceWorker
+                        return registration.sync.register('sync-technos')
+                    });
+                });
+            } else {
+                // TODO browser does NOT support SyncManager: send data to server via ajax
+                console.log('SyncManager NOT supported by your browser');
+            }
+        }).then(() => {
+            clearForm();
         })
+        .catch(error => console.error(error));
 });
+
+const clearForm = () => {
+    technonameField.value = '';
+    technoDescriptionField.value = '';
+    technoUrlField.value = '';
+    technonameField.focus();
+};
 
